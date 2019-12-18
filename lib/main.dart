@@ -19,7 +19,7 @@ import 'stock_settings.dart';
 import 'stock_symbol_viewer.dart';
 import 'stock_types.dart';
 
-import 'login.dart';
+import './ui/login/login.dart';
 import 'home.dart';
 
 class StocksApp extends StatefulWidget {
