@@ -138,7 +138,7 @@ class LoginFormState extends State<LoginForm> {
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
                     var client = Provider.of<GraphQLClient>(context, listen: false);
-                    client.authenticate(_username, _password, "tnor")
+                    client.authenticate(_username, _password)
                     .then((authResult) {
                       if (authResult) {
                         Navigator.pushNamed(context, '/home');
