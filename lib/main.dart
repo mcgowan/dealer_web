@@ -124,7 +124,7 @@ void main() {
   const String url = "http://172.16.77.59/asm/all/graphql/csr/api";
   const String clientName = "dealernet";
   const String dsn = "tnor";
-  final graphQLClient = GraphQLClient(url: url, client: clientName, dsn: dsn);
+  final graphQLClient = GraphQLClient(url: url, client: clientName, defaultDsn: dsn);
 
   runApp(
     MultiProvider(

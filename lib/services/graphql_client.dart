@@ -35,7 +35,7 @@ class GraphQLClient {
   /// The name of the default DSN for this client.
   ///
   /// This dsn will be used when you authenticate without supplying a dsn.
-  final String dsn;
+  final String defaultDsn;
 
   /// The current authorization header.
   ///
@@ -46,10 +46,10 @@ class GraphQLClient {
   bool get isAuthenticated => authorizationHeader != null;
 
   /// Constructs a new instance of the ICXAuthorizationHeader.
-  GraphQLClient({this.url, this.client, this.dsn});
+  GraphQLClient({this.url, this.client, this.defaultDsn});
 
   /// Authenticate the client for the given user, proof and dsn.
-  Future<bool> authenticate(String user, String proof, String dsn) async {
+  Future<bool> authenticate(String user, String proof, [String dsn]) async {
     const String query = """
       mutation auth(\$user: String!, \$proof: String!, \$dsn: String!) {
         authenticate(username: \$user, proof: \$proof, dsns: [\$dsn]) {
@@ -67,6 +67,10 @@ class GraphQLClient {
     """;
 
     authorizationHeader = null;
+    if (dsn == null) {
+      dsn = this.defaultDsn;
+    }
+
     Object variables = {"user": user, "proof": proof, "dsn": dsn};
 
     var value = await executeQuery(query, variables);
@@ -110,10 +114,10 @@ class GraphQLClient {
     };
 
     String requestString = jsonEncode(request);
-    print("Request: $requestString");
+    // print("Request: $requestString");
 
     Response response = await post(url, headers: headers, body: requestString);
-    print("Response: ${response.body}");
+    // print("Response: ${response.body}");
 
     // Refresh token if returned
     var icxAuthorizationHeaderString =
