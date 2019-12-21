@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
 // import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:provider/provider.dart';
+
+import './services/graphql_client.dart';
 
 import 'i18n/stock_strings.dart';
 import 'stock_data.dart';
@@ -63,6 +66,7 @@ class HomeState extends State<Home> {
   final TextEditingController _searchQuery = TextEditingController();
   bool _isSearching = false;
   bool _autorefresh = false;
+  String _customerName = "";
 
   void _handleSearchBegin() {
     ModalRoute.of(context).addLocalHistoryEntry(LocalHistoryEntry(
@@ -196,7 +200,8 @@ class HomeState extends State<Home> {
   AppBar buildAppBar() {
     return AppBar(
       elevation: 0.0,
-      title: Text(StockStrings.of(context).title),
+      // title: Text("${StockStrings.of(context).title} $_customerName"),
+      title: Text(_customerName),
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.search),
@@ -234,6 +239,32 @@ class HomeState extends State<Home> {
       ),
     );
   }
+
+  void getCustomerName(BuildContext context) {
+    if (_customerName == "") {
+      String query = """
+        query getCustomer(\$customerId: Int!){
+          serverTime
+          customer(id: \$customerId) {
+            defaultAddress {
+              firstName
+              surname
+            }
+          }
+        }
+      """;
+
+      final client = Provider.of<GraphQLClient>(context, listen: false);
+      client.executeQuery(query, {"customerId": 25641940})
+      .then((result) {
+        dynamic address = result['data']['customer']['defaultAddress'];
+        setState(() {
+          _customerName = "${address['firstName']} ${address['surname']}";
+        });
+      }) ;
+    }
+  }
+
 
   static Iterable<Stock> _getStockList(StockData stocks, Iterable<String> symbols) {
     return symbols.map<Stock>((String symbol) => stocks[symbol])
@@ -323,6 +354,7 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    getCustomerName(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(

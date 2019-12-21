@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/graphql_client.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -56,30 +58,66 @@ class Login extends StatelessWidget {
         ],
       );
 
-  loginFields(BuildContext context) => Container(
-        child: Column(
+  loginFields(BuildContext context) => Container(child: LoginForm());
+
+}
+
+// Login Form widget.
+class LoginForm extends StatefulWidget {
+  @override
+  LoginFormState createState() {
+    return LoginFormState();
+  }
+}
+
+// Login Form State class.
+class LoginFormState extends State<LoginForm> {
+  final _formKey = GlobalKey<FormState>();
+  String _username = "";
+  String _password = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 30.0),
-              child: TextField(
+              child: TextFormField(
                 maxLines: 1,
                 decoration: InputDecoration(
                   hintText: "Enter your username",
                   labelText: "Username",
                 ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter your username';
+                  }
+                  return null;
+                },
+                initialValue: "ibsadmin",
+                onSaved: (val) => setState(() => _username = val),
               ),
             ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-              child: TextField(
+              child: TextFormField(
                 maxLines: 1,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Enter your password",
                   labelText: "Password",
                 ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+                onSaved: (val) => setState(() => _password = val),
               ),
             ),
             SizedBox(
@@ -97,7 +135,16 @@ class Login extends StatelessWidget {
                 ),
                 color: Colors.purple,
                 onPressed: () {
-                  Navigator.pushNamed(context, '/home');
+                  if (_formKey.currentState.validate()) {
+                    _formKey.currentState.save();
+                    var client = Provider.of<GraphQLClient>(context, listen: false);
+                    client.authenticate(_username, _password, "tnor")
+                    .then((authResult) {
+                      if (authResult) {
+                        Navigator.pushNamed(context, '/home');
+                      }
+                    });
+                  }
                 },
               ),
             ),
@@ -110,5 +157,6 @@ class Login extends StatelessWidget {
             ),
           ],
         ),
-      );
+    );
+  }
 }

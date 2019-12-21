@@ -11,6 +11,8 @@ import 'package:flutter/rendering.dart' show
   debugPaintLayerBordersEnabled,
   debugPaintPointersEnabled,
   debugRepaintRainbowEnabled;
+import 'package:provider/provider.dart';
+import './services/graphql_client.dart';
 
 import 'i18n/stock_strings.dart';
 import 'stock_data.dart';
@@ -21,6 +23,7 @@ import 'stock_types.dart';
 
 import './ui/login/login.dart';
 import 'home.dart';
+
 
 class StocksApp extends StatefulWidget {
   @override
@@ -112,6 +115,23 @@ class StocksAppState extends State<StocksApp> {
   }
 }
 
+// void main() {
+//   runApp(StocksApp());
+// }
+
 void main() {
-  runApp(StocksApp());
+  // TODO: Figure out what to do with the hardcoded url
+  const String url = "http://172.16.77.59/asm/all/graphql/csr/api";
+  const String clientName = "dealernet";
+  const String dsn = "tnor";
+  final graphQLClient = GraphQLClient(url: url, client: clientName, dsn: dsn);
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(create: (_) => graphQLClient),
+      ],
+      child: StocksApp(),
+    ),
+  );
 }

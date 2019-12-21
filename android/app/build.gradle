@@ -51,6 +51,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    // flavorName {
+    //     applicationId = "io.flutter.examples.dealer_web"
+    // }
 }
 
 flutter {
@@ -62,3 +66,5 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }
+
+
