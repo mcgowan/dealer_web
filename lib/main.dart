@@ -15,7 +15,22 @@
 // [ ] update login screen theme
 
 import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart' show
+//   debugPaintSizeEnabled,
+//   debugPaintBaselinesEnabled,
+//   debugPaintLayerBordersEnabled,
+//   debugPaintPointersEnabled,
+//   debugRepaintRainbowEnabled;
+import 'package:provider/provider.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import './services/graphql_client.dart';
+
+// import 'i18n/stock_strings.dart';
+// import 'stock_data.dart';
+// import 'stock_home.dart';
+// import 'stock_settings.dart';
+// import 'stock_symbol_viewer.dart';
+// import 'stock_types.dart';
 
 import './utils/custom_route.dart';
 import './ui/login/login.dart';
@@ -25,10 +40,6 @@ import './ui/dealer/tickets.dart';
 import './ui/dealer/wallet.dart';
 import './ui/customer/customer_dashboard.dart';
 import './ui/customer/customer_list.dart';
-
-void main() {
-  runApp(DealerNet());
-}
 
 class DealerNet extends StatelessWidget {
   @override
@@ -74,3 +85,29 @@ class DealerNet extends StatelessWidget {
         });
   }
 }
+
+// void main() {
+//   runApp(StocksApp());
+// }
+
+void main() {
+  // TODO: Figure out what to do with the hardcoded url
+  const String url = "http://172.16.77.59/asm/all/graphql/csr/api";
+  const String clientName = "dealernet";
+  const String dsn = "tnor";
+  final graphQLClient = GraphQLClient(url: url, client: clientName, defaultDsn: dsn);
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(create: (_) => graphQLClient),
+      ],
+      child: DealerNet(),
+    ),
+  );
+}
+
+// void main() {
+//   runApp(DealerNet());
+// }
+
