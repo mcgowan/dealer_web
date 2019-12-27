@@ -135,16 +135,19 @@ class LoginFormState extends State<LoginForm> {
                 ),
                 color: Colors.purple,
                 onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    _formKey.currentState.save();
-                    var client = Provider.of<GraphQLClient>(context, listen: false);
-                    client.authenticate(_username, _password)
-                    .then((authResult) {
-                      if (authResult) {
-                        Navigator.pushNamed(context, '/dashboard');
-                      }
-                    });
-                  }
+                  
+                  Navigator.pushNamed(context, '/dashboard');
+
+                  // if (_formKey.currentState.validate()) {
+                  //   _formKey.currentState.save();
+                  //   var client = Provider.of<GraphQLClient>(context, listen: false);
+                  //   client.authenticate(_username, _password)
+                  //   .then((authResult) {
+                  //     if (authResult) {
+                  //       Navigator.pushNamed(context, '/dashboard');
+                  //     }
+                  //   });
+                  // }
                 },
               ),
             ),

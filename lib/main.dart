@@ -13,6 +13,7 @@
 // [ ] set app icon
 // [x] import font awesome, use rupee symbol for balance
 // [ ] update login screen theme
+// [x] merge with main branch
 
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart' show
