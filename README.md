@@ -1,10 +1,10 @@
-# Stocks
+# Dealer Net
 
 Demo app for the material design widgets and other features provided by Flutter.
 
 ## Building
 
-You can follow these instructions to build the stocks app
+You can follow these instructions to build the Dealer Net app
 and install it onto your device.
 
 ### Prerequisites
@@ -12,9 +12,8 @@ and install it onto your device.
 If you are new to Flutter, please first follow
 the [Flutter Setup](https://flutter.dev/setup/) guide.
 
-### Building and installing the stocks demo app
+### Building and installing the Dealer Net demo app
 
-* `cd $FLUTTER_ROOT/examples/stocks`
 * `flutter pub get`
 * `flutter run --release`
 

@@ -1,117 +1,76 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// *** concerns for cross-platform ***
+// [ ] display of full-screen dialog, route to dialog
+// [ ] file access for bulk upload
+// [ ] hide footer nav for web
 
-library stocks;
+// [x] placeholder for all customer pages
+// [x] fab button on customer list, route to customer create
+// [x] find customer icons
+// [x] convert search to dialog
+// [x] convert create customer to dialog
+// [x] lco panel
+// [ ] build create customer form
+// [ ] set app icon
+// [x] import font awesome, use rupee symbol for balance
+// [ ] update login screen theme
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show
-  debugPaintSizeEnabled,
-  debugPaintBaselinesEnabled,
-  debugPaintLayerBordersEnabled,
-  debugPaintPointersEnabled,
-  debugRepaintRainbowEnabled;
+import 'package:dynamic_theme/dynamic_theme.dart';
 
-import 'i18n/stock_strings.dart';
-import 'stock_data.dart';
-// import 'stock_home.dart';
-import 'stock_settings.dart';
-import 'stock_symbol_viewer.dart';
-import 'stock_types.dart';
-
+import './utils/custom_route.dart';
 import './ui/login/login.dart';
-import 'home.dart';
-
-class StocksApp extends StatefulWidget {
-  @override
-  StocksAppState createState() => StocksAppState();
-}
-
-class StocksAppState extends State<StocksApp> {
-  StockData stocks;
-
-  StockConfiguration _configuration = StockConfiguration(
-    stockMode: StockMode.optimistic,
-    backupMode: BackupMode.enabled,
-    debugShowGrid: false,
-    debugShowSizes: false,
-    debugShowBaselines: false,
-    debugShowLayers: false,
-    debugShowPointers: false,
-    debugShowRainbow: false,
-    showPerformanceOverlay: false,
-    showSemanticsDebugger: false,
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    stocks = StockData();
-  }
-
-  void configurationUpdater(StockConfiguration value) {
-    setState(() {
-      _configuration = value;
-    });
-  }
-
-  ThemeData get theme {
-    switch (_configuration.stockMode) {
-      case StockMode.optimistic:
-        return ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: Colors.purple,
-        );
-      case StockMode.pessimistic:
-        return ThemeData(
-          brightness: Brightness.dark,
-          accentColor: Colors.redAccent,
-        );
-    }
-    assert(_configuration.stockMode != null);
-    return null;
-  }
-
-  Route<dynamic> _getRoute(RouteSettings settings) {
-    if (settings.name == '/stock') {
-      final String symbol = settings.arguments as String;
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (BuildContext context) => StockSymbolPage(symbol: symbol, stocks: stocks),
-      );
-    }
-    // The other paths we support are in the routes table.
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    assert(() {
-      debugPaintSizeEnabled = _configuration.debugShowSizes;
-      debugPaintBaselinesEnabled = _configuration.debugShowBaselines;
-      debugPaintLayerBordersEnabled = _configuration.debugShowLayers;
-      debugPaintPointersEnabled = _configuration.debugShowPointers;
-      debugRepaintRainbowEnabled = _configuration.debugShowRainbow;
-      return true;
-    }());
-    return MaterialApp(
-      title: 'Dealer Web',
-      theme: theme,
-      localizationsDelegates: StockStrings.localizationsDelegates,
-      supportedLocales: StockStrings.supportedLocales,
-      debugShowMaterialGrid: _configuration.debugShowGrid,
-      showPerformanceOverlay: _configuration.showPerformanceOverlay,
-      showSemanticsDebugger: _configuration.showSemanticsDebugger,
-      routes: <String, WidgetBuilder>{
-         '/':         (BuildContext context) => Login(),
-         '/home':     (BuildContext context) => Home(stocks, _configuration, configurationUpdater),
-         '/settings': (BuildContext context) => StockSettings(_configuration, configurationUpdater),
-      },
-      onGenerateRoute: _getRoute,
-    );
-  }
-}
+import './ui/dealer/inbox.dart';
+import './ui/dealer/dashboard.dart';
+import './ui/dealer/tickets.dart';
+import './ui/dealer/wallet.dart';
+import './ui/customer/customer_dashboard.dart';
+import './ui/customer/customer_list.dart';
 
 void main() {
-  runApp(StocksApp());
+  runApp(DealerNet());
+}
+
+class DealerNet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DynamicTheme(
+        defaultBrightness: Brightness.light,
+        data: (brightness) => ThemeData(
+              primarySwatch: Colors.purple,
+              brightness: brightness,
+            ),
+        themedWidgetBuilder: (context, theme) {
+          return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Dealer Net',
+              theme: theme,
+              onGenerateRoute: (RouteSettings settings) {
+                switch (settings.name) {
+                  case '/':
+                    return new CustomRoute(
+                        builder: (_) => new Login(), settings: settings);
+                  case '/inbox':
+                    return new CustomRoute(
+                        builder: (_) => new Inbox(), settings: settings);
+                  case '/dashboard':
+                    return new CustomRoute(
+                        builder: (_) => new Dashboard(), settings: settings);
+                  case '/tickets':
+                    return new CustomRoute(
+                        builder: (_) => new Tickets(), settings: settings);
+                  case '/wallet':
+                    return new CustomRoute(
+                        builder: (_) => new Wallet(), settings: settings);
+                  case '/customer_dashboard':
+                    return new CustomRoute(
+                        builder: (_) => new CustomerDashboard(),
+                        settings: settings);
+                  case '/customer_list':
+                    return new CustomRoute(
+                        builder: (_) => new CustomerList(), settings: settings);
+                }
+                return null;
+              });
+        });
+  }
 }

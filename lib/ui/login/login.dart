@@ -8,7 +8,7 @@ class Login extends StatelessWidget {
         body: Center(
           child: SizedBox(
             height: 600,
-            width: 400,
+            width: 360,
             child: Card(
                 color: Theme.of(context).cardColor,
                 elevation: 1.0,
@@ -97,7 +97,7 @@ class Login extends StatelessWidget {
                 ),
                 color: Colors.purple,
                 onPressed: () {
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamed(context, '/dashboard');
                 },
               ),
             ),
